@@ -147,8 +147,13 @@ def cmd_switch(a):
             # wrapping to the next round (index 0, turn + 1) is not done (untested); fall back to --keep-turn:
             # the old faction, now AI, plays what is left of its turn, then the round goes on as normal
             ti = None; print('old human is last in turn order: turn index kept (the old faction ends its turn as AI)')
+    reveal = None
+    if a.reveal:   # "x y" per line: display positions of the new faction's characters and settlements (from the game)
+        with open(a.reveal) as f:
+            reveal = [tuple(float(v) for v in l.split()[:2]) for l in f if len(l.split()) >= 2]
+        print('positions to reveal:', len(reveal))
     sf.run(types.SimpleNamespace(src=src, dst=out, new=a.new, mode='players', shroud_from=source, party=None,
-                                 info=False, repack=False, turn_index=ti))
+                                 info=False, repack=False, turn_index=ti, reveal=reveal))
     print('\nLOAD THIS SAVE:', os.path.basename(out))
 
 def main():
@@ -157,6 +162,7 @@ def main():
     p = sub.add_parser('status'); p.add_argument('save'); p.set_defaults(f=cmd_status)
     p = sub.add_parser('switch'); p.add_argument('save'); p.add_argument('new')
     p.add_argument('--name', help='save name without .save (default "FS <new> from <source>")')
+    p.add_argument('--reveal', help='file with "x y" display positions to mark as explored + visible for the new faction')
     p.add_argument('--campaign-dir', help='folder holding the campaign startpos.esf (default <game>/data/campaigns/<key>)')
     p.add_argument('--keep-turn', action='store_true',
                    help="don't move the turn index (the old faction then finishes its turn as AI on load)")

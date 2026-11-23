@@ -131,16 +131,34 @@ local function fail(why)   -- back to idle and show why; removing request.txt ma
   message_panel("Switch failed", why:sub(1, 90))
 end
 
+-- display positions of the new faction's characters (armies, fleets, agents) and settlements, for the helper: the
+-- save edit marks the land and sea around them as explored and visible (fleets at sea stayed under the fog with
+-- the Lua region reveal alone: user's playtest 2026-11-23; tools/shroud.py)
+local function write_positions(key)
+  local f = g():model():world():faction_by_key(key); local out, n = {}, 0
+  local function add(o)
+    pcall(function()
+      local x, y = o:display_position_x(), o:display_position_y()
+      if x and y and (x ~= 0 or y ~= 0) then n = n + 1; out[n] = string.format("%.1f %.1f", x, y) end
+    end)
+  end
+  pcall(function() local cl = f:character_list(); for i = 0, cl:num_items() - 1 do add(cl:item_at(i)) end end)
+  pcall(function() local rl = f:region_list(); for i = 0, rl:num_items() - 1 do add(rl:item_at(i):settlement()) end end)
+  wfile("positions.txt", table.concat(out, "\n") .. "\n")
+  return n
+end
+
 local function start_switch(new)
   local old = local_faction()
   local turn = g():model():turn_number()
-  for _, n in ipairs({ "request.txt", "ready.txt", "click.txt", "tick.txt", "camera.txt", "poke.txt" }) do os.remove(DIR .. n) end
+  for _, n in ipairs({ "request.txt", "ready.txt", "click.txt", "tick.txt", "camera.txt", "poke.txt", "positions.txt" }) do os.remove(DIR .. n) end
+  local np = 0; pcall(function() np = write_positions(new) end)
   wfile("request.txt", string.format("%s %s %d %d", old, new, turn, os.time()))
   g():autosave_at_next_opportunity()
   os.execute('start "" /b "' .. (exists(HELPER) and HELPER or DEV_HELPER) .. '"')
   FS.state = "waiting"; FS.new = new; FS.polls = 0; FS.poll_n = (FS.poll_n or 0) + 1
   message_panel("Switching to " .. name_of(new), "Please wait, about a minute...")
-  log("switch " .. old .. " -> " .. new .. " t" .. turn .. ": autosave asked, helper started")
+  log("switch " .. old .. " -> " .. new .. " t" .. turn .. ": autosave asked, helper started; " .. np .. " positions")
   -- each switch gets its own timer name (re-arming one name can make two chains; a cancelled chain must die)
   g():add_time_trigger("fs_poll" .. FS.poll_n, 1)
 end

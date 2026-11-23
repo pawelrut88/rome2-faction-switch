@@ -10,7 +10,7 @@ mkdir -p build/release/faction_switch
 .venv/Scripts/python -m PyInstaller --noconfirm --clean --onefile --windowed \
   --name faction_switch_helper \
   --paths F:/ROME2/Projects/faction-switch/tools --paths F:/ROME2/Projects/faction-switch/tools/vendor_ia \
-  --hidden-import fs_loop --hidden-import switch_faction --hidden-import savelib \
+  --hidden-import fs_loop --hidden-import switch_faction --hidden-import savelib --hidden-import shroud \
   --hidden-import esf --hidden-import startpos_tool --hidden-import lzwin --hidden-import addfac --hidden-import lib \
   --add-binary "F:/ROME2/Projects/faction-switch/tools/vendor/liblzma-5.dll;." \
   --workpath build/pyi --specpath build/pyi --distpath build/release/faction_switch \

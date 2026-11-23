@@ -134,6 +134,8 @@ def main():
     olog = os.path.join(DIR, 'fs_loop_out.txt')
     with open(olog, 'w') as fo:
         args = ['switch', src, new, '--name', name]
+        pf = os.path.join(DIR, 'positions.txt')   # written by the game at switch time: the new faction's positions
+        if os.path.exists(pf): args += ['--reveal', pf]
         if FROZEN: cmd = [sys.executable, '--fs-loop'] + args          # the same exe runs fs_loop (see the end)
         else: cmd = [sys.executable.replace('pythonw', 'python'), os.path.join(HERE, 'tools', 'fs_loop.py')] + args
         p = subprocess.Popen(cmd, stdout=fo, stderr=subprocess.STDOUT, text=True, cwd=DIR,

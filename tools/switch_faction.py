@@ -125,6 +125,26 @@ def copy_human_records(D, key, startpos):
           % (len(shroud.enc()), len(mm.enc()), key, startpos))
     return list(factions(D)).index(key)
 
+REVEAL_RADIUS = 12   # display units around each army/agent/settlement (the game's LINE_OF_SIGHT boxes: ~5-6 each way)
+
+def reveal_shroud(D, key, points, radius=REVEAL_RADIUS):
+    """Mark the area around `points` (display x, y of the faction's characters and settlements, written by the game
+    at switch time) as explored and visible (shroud arrays 0 and 1). A faction played for the first time gets its
+    turn-1 shroud, and any faction's AI-moved armies and fleets can stand in land or sea it never saw: there they
+    were hidden and could not be selected (user's playtest 2026-11-23). Returns the FACTION_ARRAY index or None."""
+    import shroud
+    f = factions(D)[key]
+    sh = [x for x in f.kids if isinstance(x, Rec) and D.N[x.name] == 'CAMPAIGN_SHROUD']
+    if not sh: print('no CAMPAIGN_SHROUD for', key, '- nothing revealed'); return None
+    qs = [q for q in sh[0].kids if isinstance(q, Rec) and D.N[q.name] == 'QUAD_TREE_BIT_ARRAY']
+    assert len(qs) == 3, 'CAMPAIGN_SHROUD layout not understood'
+    for i in (0, 1):
+        v = qs[i].kids[3]; dims = [struct.unpack('<H', x.raw)[0] for x in qs[i].kids[:3]]
+        assert dims == [1357, 1110, 2048], 'shroud size not understood: %s' % dims
+        v.raw, n = shroud.reveal(v.raw, points, radius)
+        print('shroud array %d of %s: %d cells set around %d positions' % (i, key, n, len(points)))
+    return list(factions(D)).index(key)
+
 def info(D):
     print('CAMPAIGN_SETUP_LOCAL:', sval(D, setup_local(D)))
     order = list(factions(D)); print('FACTION_ARRAY[0] (first in turn order):', order[0], ' factions:', len(order))
@@ -192,6 +212,9 @@ def run(a):
                 w.szraw = None; expect.add('/WORLD.1'); print('turn index (WORLD[1]) ->', ti)
             if a.shroud_from:
                 idx = copy_human_records(D, a.new, a.shroud_from)
+                if idx is not None: expect.add('/FACTION_ARRAY[%d].0/FACTION' % idx)
+            if getattr(a, 'reveal', None):
+                idx = reveal_shroud(D, a.new, a.reveal)
                 if idx is not None: expect.add('/FACTION_ARRAY[%d].0/FACTION' % idx)
             D.finish()
         esf.save(D.d, new)
