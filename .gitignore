@@ -1,0 +1,20 @@
+# Only the source goes into git: everything is ignored except what is listed below.
+# Left out on purpose: saves and harvested saves (saves/, state/), test screenshots and logs, game files extracted
+# from CA's and DeI's packs (work/), builds (build/; the pack, exe and missions file go into GitHub releases),
+# the local venv, engine-research experiments (tools/ghidra), copies of the author's own config files (tests/backup).
+/*
+!/.gitignore
+!/README.md
+!/INSTALL.txt
+!/tools/
+!/pack_src/
+!/ui_src/
+!/tests/
+/tools/ghidra/
+/tools/__pycache__/
+/tools/vendor_ia/__pycache__/
+/tests/*
+!/tests/*.sh
+!/tests/*.py
+!/tests/*.lua
+!/tests/*modlist.txt

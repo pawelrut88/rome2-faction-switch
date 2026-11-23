@@ -1,0 +1,6 @@
+Copied 2026-11-23 from F:\ROME2\Claude 01\handoff (IA startpos project's ESF code), unchanged:
+esf.py startpos_tool.py lzwin.py addfac.py lib.py
+sha256: 6f5f5e7f20a37abe ed567f957e76a23b 29b330ae01f1f779 ef1ef82b42561ace 2bc1dd68112d66b8 
+Shared between the user's projects (user, 2026-11-23). Bundled into faction_switch_helper.exe.
+tools/vendor/liblzma-5.dll: from C:\Program Files\Inkscape\bin (xz's liblzma, public domain / 0BSD; needs only the
+Windows UCRT). Version: 5.8.1

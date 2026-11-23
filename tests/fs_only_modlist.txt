@@ -1,0 +1,3 @@
+mod "faction_switch.pack";
+DISABLE_BINK true;
+show_frontend_movies false;
