@@ -148,9 +148,35 @@ local function cancel_switch()   -- the helper exits by itself once request.txt 
   os.remove(DIR .. "request.txt"); FS.state = "idle"; close_panel(); log("cancelled by the player")
 end
 
+-- The Load window. Find("load-save_game") gives the first one in the tree, which can be a hidden Save window the
+-- player opened earlier (same layout): its list never shows a row, so the switch hung in the Load window (user's
+-- playtest 2026-11-23, after saving by hand). Take the one that is shown.
+local function load_panel()
+  local hit
+  local function walk(c, d)
+    if hit or d > 6 then return end
+    for i = 0, c:ChildCount() - 1 do
+      local ok, ch = pcall(function() return U(c:Find(i)) end)
+      if ok and ch then
+        local okid, id = pcall(function() return ch:Id() end)
+        if okid and id == "load-save_game" then
+          if shown(ch) then hit = ch; return end
+        else walk(ch, d + 1) end
+        if hit then return end
+      end
+    end
+  end
+  if FS.root then pcall(walk, FS.root, 0) end
+  return hit
+end
+local function in_load(id)
+  local p = load_panel(); if not p then return nil end
+  local x = p:Find(id); if x then return U(x) end
+end
+
 -- the top row of the load list (the list_box children are not in screen order)
 local function top_row()
-  local lb = find("list_box", "load-save_game"); if not lb then return nil end
+  local lb = in_load("list_box"); if not lb then return nil end
   local by, bn
   for i = 0, lb:ChildCount() - 1 do
     pcall(function()
@@ -176,7 +202,7 @@ local function on_ui_frame()
     local name = top_row()
     if FS.tries == 1 or FS.tries % 10 == 0 then log("top row (try " .. FS.tries .. "): " .. tostring(name)) end
     if is_target(name) then
-      local ok = find("button_ok", "load-save_game")
+      local ok = in_load("button_ok")
       wfile("click.txt", "OK " .. pos(ok)); FS.state = "confirm"; log("top row is the target (try " .. FS.tries .. "); OK at " .. pos(ok))
     elseif FS.tries >= 200 then
       wfile("click.txt", "ERROR top row is '" .. tostring(name) .. "', not the target"); FS.state = "idle"
@@ -299,7 +325,7 @@ local function on_timer(ctx)
     -- every click is a ComponentLClickUp, i.e. a frame in which on_ui_frame looks again
     pcall(on_ui_frame)
     if FS.state == "opening" then
-      local lt = find("button_local", "load-save_game")
+      local lt = in_load("button_local")
       if lt then wfile("poke.txt", "POKE " .. pos(lt)) end
     end
   elseif r then
