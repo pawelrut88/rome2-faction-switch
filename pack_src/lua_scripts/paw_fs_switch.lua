@@ -89,7 +89,11 @@ local function my_turn() return FS.myturn end
 local function on_turn(starts)
   return function(ctx)
     local k; pcall(function() k = ctx:faction():name() end)
-    if k and k == local_faction() then FS.myturn = starts; log("turn " .. (starts and "starts" or "ends") .. ": " .. k) end
+    if k and k == local_faction() then
+      FS.myturn = starts; log("turn " .. (starts and "starts" or "ends") .. ": " .. k)
+      -- turn end: a load where no turn start came (vanilla, P20) must not move the camera at the next turn
+      if starts and FS.recenter then pcall(FS.recenter) elseif not starts then FS.recenter = nil end
+    end
   end
 end
 
@@ -323,6 +327,14 @@ local function camera_after_load()
   if not cqi then log("camera: " .. me .. " has no army"); return end
   CAM = { cqi = cqi, tries = 0 }
   g():add_time_trigger("fs_cam0", 1)
+  -- In DeI the faction's turn starts ~35 s after the load (its scripts), and the game's turn-start camera then moves
+  -- away from our army (user's DeI playtest 2026-11-23: Carthage t4, camera over snow). In vanilla the turn starts
+  -- before this. So once, at the first turn start of this faction after the load, move the camera there again.
+  FS.recenter = function()
+    FS.recenter = nil
+    local c = general_cqi(me)
+    if c then CAM = { cqi = c, tries = 0 }; g():add_time_trigger("fs_cam0", 1); log("camera: again at turn start") end
+  end
 end
 
 local function on_timer(ctx)
