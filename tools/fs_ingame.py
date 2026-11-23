@@ -57,7 +57,12 @@ def wait_file(name, timeout, wiggle=False, poke=None):
         # Lua a frame (ComponentLClickUp) when mouse-over events don't come (long run round 3, 2026-11-23)
         if poke and k % 8 == 5 and os.path.exists(os.path.join(DIR, poke)):
             with open(os.path.join(DIR, poke)) as f: pk = f.read().strip()
-            if pk.startswith('POKE'): log('poke'); click(*client_xy(pk))
+            # never poke while minimized (client rect 0: the click went to 0,0) and never once the game has written
+            # the file we wait for: by then Lua has selected the target save, and a poke that lands on the list
+            # selects another save (user's full-screen playtest 2026-11-23 loaded a wrong save that way)
+            if pk.startswith('POKE') and front('poke'):
+                x, y = client_xy(pk)
+                if x > 0 and y > 0: log('poke'); click(x, y, unless=p)
         time.sleep(0.2)
     return None
 
@@ -66,18 +71,35 @@ def hwnd():
     if not h: raise RuntimeError('game window not found')
     return h
 
+def front(why=''):
+    """Bring the game back to the front. Lua starts this exe with os.execute, which opens a cmd.exe console for a
+    moment; in full screen the game loses focus to it and minimizes (user's playtest, 2026-11-23). Restores the
+    window if minimized and makes it the foreground window (Alt tap: Windows lets a process take the foreground
+    only after an input event)."""
+    try: h = hwnd()
+    except RuntimeError: return False
+    if u32.IsIconic(h): u32.ShowWindow(h, 9)    # SW_RESTORE
+    if u32.GetForegroundWindow() != h:
+        u32.SetForegroundWindow(h)
+        if u32.GetForegroundWindow() != h:
+            u32.keybd_event(0x12, 0, 0, 0); u32.keybd_event(0x12, 0, 2, 0)   # VK_MENU down/up
+            u32.SetForegroundWindow(h)
+        log('front%s: %s' % (' (' + why + ')' if why else '', 'ok' if u32.GetForegroundWindow() == h else 'FAILED'))
+    return u32.GetForegroundWindow() == h
+
 def client_xy(text):
     """'x y w h rw rh' (UI units) -> centre in client pixels, scaled like the bridge's client_pos."""
     x, y, w, h, rw, rh = [float(v) for v in text.split()[1:7]]
     rc = wt.RECT(); u32.GetClientRect(hwnd(), ctypes.byref(rc))
     return int((x + w / 2) * rc.right / (rw or rc.right)), int((y + h / 2) * rc.bottom / (rh or rc.bottom))
 
-def click(x, y):
+def click(x, y, unless=None):
     if stale(): raise SystemExit(0)
     """Posted click at client (x, y). The real cursor must hover there too (some lists ignore posted clicks
     otherwise; rome2-bridge post_click.ps1), so this moves the user's mouse."""
-    h = hwnd(); pt = wt.POINT(x, y); u32.ClientToScreen(h, ctypes.byref(pt))
+    front('click'); h = hwnd(); pt = wt.POINT(x, y); u32.ClientToScreen(h, ctypes.byref(pt))
     u32.SetCursorPos(pt.x, pt.y); time.sleep(0.4)
+    if unless and os.path.exists(unless): log('poke skipped: %s came' % os.path.basename(unless)); return
     lp = (y << 16) | (x & 0xFFFF)
     for m, w, d in ((0x200, 0, 0.25), (0x200, 0, 0.25), (0x201, 1, 0.15), (0x202, 0, 0)):
         u32.PostMessageW(h, m, w, lp); time.sleep(d)
@@ -93,6 +115,8 @@ def main():
     # the autosave: newer than the request and no longer growing
     t0 = time.time(); last = None
     while True:
+        if time.time() - t0 < 5: front('start')   # the console flash from os.execute can come a moment later
+
         if time.time() - t0 > 90: raise RuntimeError('no new auto_save.save within 90 s')
         st = os.stat(AUTO) if os.path.exists(AUTO) else None
         if st and st.st_mtime >= t_req - 1:
