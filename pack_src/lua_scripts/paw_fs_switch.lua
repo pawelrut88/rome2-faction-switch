@@ -240,11 +240,35 @@ local function camera_step(name)
   if not CAM.opened then local t = find("tab_units"); if t then pcall(function() t:SimulateClick() end); CAM.opened = true end end
   g():add_time_trigger("fs_cam" .. CAM.tries, 0.3)
 end
+-- A faction played for the first time gets its turn-1 shroud (from the start/missions file). By a late turn its AI
+-- armies stand in land that was unexplored then: hidden under the clouds and not selectable (user's playtest,
+-- Seleucid at turn 18, 2026-11-23). So after a switch: every region it owns and every region one of its characters
+-- stands in is made seen + visible for it. True for any played faction too (its own land and armies), so done always.
+local function reveal_own(key)
+  local gi = g(); local f = gi:model():world():faction_by_key(key); local done, n = {}, 0
+  local function add(r)
+    if not r or r == "" or done[r] then return end
+    done[r] = true; n = n + 1
+    pcall(function() gi:make_region_seen_in_shroud(key, r) end)
+    pcall(function() gi:make_region_visible_in_shroud(key, r) end)
+  end
+  pcall(function()
+    local rl = f:region_list()
+    for i = 0, rl:num_items() - 1 do add(rl:item_at(i):name()) end
+  end)
+  local cl = f:character_list()
+  for i = 0, cl:num_items() - 1 do
+    pcall(function() local ch = cl:item_at(i); if ch:has_region() then add(ch:region():name()) end end)
+  end
+  log("shroud: " .. n .. " own/army regions made seen and visible for " .. key)
+end
+
 local function camera_after_load()
   local want = rfile("camera.txt"); if not want then return end
   want = want:gsub("%s+$", ""); os.remove(DIR .. "camera.txt")
   local me = local_faction()
   if me ~= want then log("camera: local faction is " .. tostring(me) .. ", not " .. want .. "; not moved"); return end
+  pcall(reveal_own, me)
   local cqi = general_cqi(me)
   if not cqi then log("camera: " .. me .. " has no army"); return end
   CAM = { cqi = cqi, tries = 0 }
