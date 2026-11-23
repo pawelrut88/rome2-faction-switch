@@ -6,6 +6,8 @@ player, and the game loads it (about a minute). The faction you leave is played 
 
 **Download:** see [Releases](../../releases): `@@@@@@PAW_faction_switch.pack` and the `faction_switch` folder (helper exe and
 missions file). Install steps: [INSTALL.txt](INSTALL.txt).
+**Steam Workshop:** [Faction Switch](https://steamcommunity.com/sharedfiles/filedetails/?id=3844730726) (the pack;
+the helper folder still comes from Releases).
 
 ## Status
 - Vanilla Rome II, Grand Campaign (main_rome). Tested in game: switching back and forth between 4 factions for 12
