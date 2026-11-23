@@ -11,7 +11,8 @@ missions file). Install steps: [INSTALL.txt](INSTALL.txt).
 - Vanilla Rome II, Grand Campaign (main_rome). Tested in game: switching back and forth between 4 factions for 12
   turns, windowed 1280x720, 1280x1024 and 1920x1080, with Consul Scriptum. Newly played factions get their
   victory conditions and chapter objectives.
-- Not tested: full screen, battles after a switch.
+- Full screen: tested at 2560x1440 (switch to a faction played for the first time).
+- Not tested: battles after a switch.
 - A Divide et Impera version exists (`tools/build_pack_dei.sh`) and worked in a first test, but it carries DeI's
   `scripting.lua`, so no DeI build is published.
 
