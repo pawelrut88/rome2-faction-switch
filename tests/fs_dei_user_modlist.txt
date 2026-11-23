@@ -1,0 +1,13 @@
+add_working_directory "F:/Steam/steamapps/workshop/content/214950/3435375001";
+mod "@rome2_bridge.pack";
+mod "@@@@@@PAW_faction_switch_dei.pack";
+mod "consulscriptum_dev.pack";
+mod "@@@@@PAW_First_Triumvirate.pack";
+mod "@@@@@PAW_Imperator_Augustus.pack";
+mod "@@@@@PAW_Alexander.pack";
+mod "@@@@@PAW_dei_population_supply.pack";
+mod "@@@@DeI136Beta.pack";
+mod "_divide_et_impera_release_12_Part1.pack";
+mod "_divide_et_impera_release_12_Part2.pack";
+DISABLE_BINK true;
+show_frontend_movies false;

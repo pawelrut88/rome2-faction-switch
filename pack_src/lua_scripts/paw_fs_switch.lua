@@ -160,7 +160,7 @@ local function start_switch(new)
   wfile("request.txt", string.format("%s %s %d %d", old, new, turn, os.time()))
   g():autosave_at_next_opportunity()
   os.execute('start "" /b "' .. (exists(HELPER) and HELPER or DEV_HELPER) .. '"')
-  FS.state = "waiting"; FS.new = new; FS.polls = 0; FS.poll_n = (FS.poll_n or 0) + 1
+  FS.state = "waiting"; FS.new = new; FS.polls = 0; FS.popups = nil; FS.menu_tries = nil; FS.poll_n = (FS.poll_n or 0) + 1
   message_panel("Switching to " .. name_of(new), "Please wait, about a minute...")
   log("switch " .. old .. " -> " .. new .. " t" .. turn .. ": autosave asked, helper started; " .. np .. " positions")
   -- each switch gets its own timer name (re-arming one name can make two chains; a cancelled chain must die)
@@ -344,12 +344,27 @@ local function on_timer(ctx)
   FS.polls = FS.polls + 1
   local r = rfile("ready.txt")
   if r and r:sub(1, 5) == "READY" then
-    FS.target = r:sub(7):gsub("%s+$", ""); FS.state = "opening"; FS.tries = 0
-    wfile("camera.txt", FS.new)
-    log("ready: " .. FS.target .. "; opening Menu > Load")
+    -- an event popup open now (DeI "Banditry: Unrest!" at turn start, P21 2026-11-23) keeps Menu > Load from
+    -- opening: close it (its OK) and look again in half a second
+    local ev = find("events")
+    if ev and shown(ev) and (FS.popups or 0) < 10 then
+      local b = find("button_accept", "events") or find("accept", "events")
+      FS.popups = (FS.popups or 0) + 1
+      pcall(function() b:SimulateClick() end); log("closed an event popup before the Load window (" .. FS.popups .. ")")
+      g():add_time_trigger("fs_poll" .. FS.poll_n, 0.5); return
+    end
     close_panel()   -- modal: with it open the Load panel ignores clicks
     local ok, e = pcall(function() find("button_menu", "menu_bar"):SimulateClick(); find("button_load"):SimulateClick() end)
     log("menu/load clicked: " .. tostring(ok) .. " " .. tostring(e))
+    if not ok then   -- before: the Load window never came and the helper gave up after 60 s (P21)
+      FS.menu_tries = (FS.menu_tries or 0) + 1
+      if FS.menu_tries <= 6 then g():add_time_trigger("fs_poll" .. FS.poll_n, 0.5); return end
+      fail("the game menu did not open; close any open window and try again"); return
+    end
+    FS.popups, FS.menu_tries = nil, nil
+    FS.target = r:sub(7):gsub("%s+$", ""); FS.state = "opening"; FS.tries = 0
+    wfile("camera.txt", FS.new)
+    log("ready: " .. FS.target .. "; opening Menu > Load")
     -- the menu pauses the game: no timers from here on, and ComponentMouseOn does not always come (long run round
     -- 3, 2026-11-23). Look once now, and give the helper a harmless spot to click (the Local tab, already selected):
     -- every click is a ComponentLClickUp, i.e. a frame in which on_ui_frame looks again
