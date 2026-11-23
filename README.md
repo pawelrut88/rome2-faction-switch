@@ -16,7 +16,7 @@ missions file). Install steps: [INSTALL.txt](INSTALL.txt).
   `scripting.lua`, so no DeI build is published.
 
 ## How it works
-- `pack_src/lua_scripts/fs_switch.lua` (in the pack): the button and window, asks the game for an autosave, starts
+- `pack_src/lua_scripts/paw_fs_switch.lua` (in the pack): the button and window, asks the game for an autosave, starts
   the helper, then opens Menu > Load and tells the helper where to click.
 - `tools/fs_ingame.py` (the helper, built into `faction_switch_helper.exe`): copies the autosave and runs
   `tools/fs_loop.py switch`, then clicks OK in the Load window.

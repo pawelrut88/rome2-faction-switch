@@ -14,7 +14,7 @@
 -- events, which are the frames where Lua looks at the panel.
 -- End turn is never blocked (disable_end_turn is not used: it also stops the AI and is stored in saves).
 local scripting = require "lua_scripts.EpisodicScripting"
-local FACTIONS = require "data.lua_scripts.fs_factions"     -- { {key, name}, ... } as the rows in the layout
+local FACTIONS = require "data.lua_scripts.paw_fs_factions"     -- { {key, name}, ... } as the rows in the layout
 local DIR = [[faction_switch\]]                            -- run files and logs (the helper's own folder)
 local HELPER = [[faction_switch\faction_switch_helper.exe]]
 local DEV_HELPER = [[faction_switch\dev_helper.cmd]]               -- development only: runs tools/fs_ingame.py
@@ -338,4 +338,4 @@ scripting.AddEventCallBack("FirstTickAfterWorldCreated", guard("first tick", fun
   pcall(place_button); camera_after_load()
 end))
 log("fs_switch loaded")
-return FS   -- package.loaded["data.lua_scripts.fs_switch"], for checks from outside (bridge)
+return FS   -- package.loaded["data.lua_scripts.paw_fs_switch"], for checks from outside (bridge)
