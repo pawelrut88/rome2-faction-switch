@@ -15,8 +15,12 @@ the helper folder still comes from Releases).
   victory conditions and chapter objectives.
 - Full screen: tested at 2560x1440 (switch to a faction played for the first time).
 - Not tested: battles after a switch.
-- A Divide et Impera version exists (`tools/build_pack_dei.sh`) and worked in a first test, but it carries DeI's
-  `scripting.lua`, so no DeI build is published.
+- Divide et Impera version: `@@@@@@PAW_faction_switch_dei.pack` (`tools/build_pack_dei.sh`), DeI 1.3.5 and the 1.3.6
+  beta, with DeI's faction names. Tested in game on DeI with the author's DeI mod list: switches, camera, a DeI event
+  popup over the Load window, first-time factions' objectives. Not checked in detail: DeI's player-only rules after
+  a switch. The pack carries DeI's own `campaigns/main_rome/scripting.lua` (plus two lines). Install steps:
+  [INSTALL_DEI.txt](INSTALL_DEI.txt). The `faction_switch` folder (helper and missions files for vanilla, DeI 1.3.5
+  and the beta) is shared by both versions.
 
 ## How it works
 - `pack_src/lua_scripts/paw_fs_switch.lua` (in the pack): the button and window, asks the game for an autosave, starts

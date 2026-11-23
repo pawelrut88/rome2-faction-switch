@@ -1,0 +1,43 @@
+Faction Switch (DeI) for Total War: Rome II - Divide et Impera, Grand Campaign
+============================================================================
+
+Play several factions in one DeI campaign. A "Switch faction" button (top left, next to the menu buttons) opens a
+list of the playable factions with DeI's names. Pick one and press OK: the game saves, the helper makes a copy of that
+save with the chosen faction as the player, and the game loads it (one to two minutes). Your old faction is then
+played by the AI.
+
+Requirements
+- Divide et Impera (Part 1, 2 and 3). The DeI 1.3.6 Public Beta is optional: the mod works with DeI 1.3.5 alone or
+  with the beta.
+
+Install
+1. Subscribe on the Steam Workshop, or put @@@@@@PAW_faction_switch_dei.pack into the game's data folder:
+     ...\steamapps\common\Total War Rome II\data\
+   Enable it in the launcher's mod manager. Put it above Divide et Impera, and above the 1.3.6 beta if you use it.
+2. Unzip faction_switch_folder.zip into the game folder, so that the folder faction_switch sits next to Rome2.exe:
+     ...\steamapps\common\Total War Rome II\faction_switch\faction_switch_helper.exe
+     ...\steamapps\common\Total War Rome II\faction_switch\missions\main_rome_98d3fd13aef9.esf  (DeI 1.3.5)
+     ...\steamapps\common\Total War Rome II\faction_switch\missions\main_rome_d50b7e641ddb.esf  (DeI 1.3.6 beta)
+     ...\steamapps\common\Total War Rome II\faction_switch\missions\main_rome_08ad6bd45ad7.esf  (vanilla)
+   The same folder serves the vanilla and the DeI version.
+
+Use
+- Switch only during your own turn. Switching ends your current turn. While the switch runs, a window says "please
+  wait"; its X button cancels.
+- During the load the helper moves your mouse for a few clicks in the Load window (its OK and the confirm tick).
+  Don't touch the mouse for those few seconds.
+- Each switch makes a new save named "FS <faction> t<turn> <time>" in your save folder.
+
+Limits
+- Grand Campaign (main_rome) only.
+- A faction you play for the first time gets its victory conditions and chapter objectives from a copy of the
+  campaign start (faction_switch\missions); without that folder it gets none.
+- Not compatible with the vanilla Faction Switch pack (use one of them) or with other mods that replace
+  campaigns/main_rome/scripting.lua or ui/campaign ui/campaign_tactical_map. Works with Consul Scriptum.
+- DeI's rules for the player's faction follow the faction you play; how they act after a switch is not checked in
+  detail. Battles fought by hand after a switch are not tested.
+- Windows only. The helper is a program (built with PyInstaller); some antivirus programs flag such programs.
+
+Files the pack replaces: campaigns/main_rome/scripting.lua (DeI's file plus two lines that load the mod),
+ui/campaign ui/campaign_tactical_map.
+Logs (for bug reports): faction_switch\lua.log and faction_switch\helper.log.
