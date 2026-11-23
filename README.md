@@ -26,8 +26,8 @@ missions file). Install steps: [INSTALL.txt](INSTALL.txt).
   missions: from its own last save if it was played before, else from the campaign start (with turn-1 missions
   from `missions/<campaign>_<start file hash>.esf`, built by `tools/build_mission_start.py` from turn-1 saves of
   every faction, `tests/harvest.py`).
-- Save files are ESF with an LZMA-packed body; `tools/vendor_ia/` is the ESF reader/writer (from the author's IA
-  startpos project), `tools/vendor/liblzma-5.dll` is xz's liblzma (public domain / 0BSD).
+- Save files are ESF with an LZMA-packed body; `tools/vendor_ia/` is the ESF reader/writer,
+  `tools/vendor/liblzma-5.dll` is xz's liblzma (public domain / 0BSD).
 
 ## Building
 Windows, Python 3, Git Bash. The scripts use the author's local paths (`F:\...`); change them at the top.
