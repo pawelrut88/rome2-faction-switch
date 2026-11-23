@@ -1,5 +1,5 @@
 mod "@rome2_bridge.pack";
-mod "faction_switch_dei.pack";
+mod "@@@@@@PAW_faction_switch_dei.pack";
 mod "_divide_et_impera_release_12_Part1.pack";
 mod "_divide_et_impera_release_12_Part2.pack";
 DISABLE_BINK true;

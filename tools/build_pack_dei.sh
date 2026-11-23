@@ -1,5 +1,5 @@
 #!/bin/sh
-# Build build/dei/faction_switch_dei.pack: the DeI version (Divide et Impera, main_rome = DeI's Grand Campaign).
+# Build build/dei/@@@@@@PAW_faction_switch_dei.pack: the DeI version (Divide et Impera, main_rome = DeI's Grand Campaign).
 # usage: sh tools/build_pack_dei.sh   (from the project folder)
 # Same as tools/build_pack.sh, except:
 #   campaigns/main_rome/scripting.lua  DeI's file (work/dei, from _divide_et_impera_release_12_Part1.pack) + our tail
@@ -13,7 +13,7 @@ R="/f/ROME2/_TOOLS/Rusted PackFile Manager/rpfm_cli.exe"
 D=/f/ROME2/ConsulScriptum/.deps
 export PATH="$D/ruby/bin:$PATH" GEM_HOME="$D/ruby/lib/ruby/gems/3.4.0" GEM_PATH="$D/ruby/lib/ruby/gems/3.4.0"
 cd "$P"
-OUT=$(cygpath -m "$P/build/dei/faction_switch_dei.pack")
+OUT=$(cygpath -m "$P/build/dei/@@@@@@PAW_faction_switch_dei.pack")
 python tools/uibuild_fs.py dei
 S=build/stage_dei
 rm -rf $S; mkdir -p "$S/campaigns/main_rome" $S/lua_scripts "$S/ui/campaign ui"
@@ -28,4 +28,4 @@ rm -f "$OUT"
 "$R" --game rome_2 pack create --pack-path "$OUT" >/dev/null 2>&1
 "$R" --game rome_2 pack add --pack-path "$OUT" -F "$(cygpath -m "$P/$S")" >/dev/null 2>&1
 "$R" --game rome_2 pack list -p "$OUT" 2>/dev/null | grep -v INFO
-ls -la build/dei/faction_switch_dei.pack; sha256sum build/dei/faction_switch_dei.pack | cut -c1-12
+ls -la build/dei/@@@@@@PAW_faction_switch_dei.pack; sha256sum build/dei/@@@@@@PAW_faction_switch_dei.pack | cut -c1-12

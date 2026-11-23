@@ -6,7 +6,7 @@ the playable factions. Pick one and press OK: the game saves, the helper makes a
 faction as the player, and the game loads it (about a minute). Your old faction is then played by the AI.
 
 Install
-1. Put faction_switch.pack into the game's data folder:
+1. Put @@@@@@PAW_faction_switch.pack into the game's data folder:
      ...\steamapps\common\Total War Rome II\data\
    and enable it in the launcher's mod manager.
 2. Put the folder faction_switch (with faction_switch_helper.exe and the missions folder inside) into the game

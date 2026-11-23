@@ -1,5 +1,5 @@
 #!/bin/sh
-# Build faction_switch.pack (vanilla Rome II, main_rome). usage: sh tools/build_pack.sh   (from the project folder)
+# Build @@@@@@PAW_faction_switch.pack (vanilla Rome II, main_rome). usage: sh tools/build_pack.sh   (from the project folder)
 # Contents:
 #   campaigns/main_rome/scripting.lua  CA's vanilla file (work/vanilla, from data_rome2.pack) + a tail that loads ours
 #   lua_scripts/fs_switch.lua          pack_src
@@ -14,7 +14,7 @@ R="/f/ROME2/_TOOLS/Rusted PackFile Manager/rpfm_cli.exe"
 D=/f/ROME2/ConsulScriptum/.deps
 export PATH="$D/ruby/bin:$PATH" GEM_HOME="$D/ruby/lib/ruby/gems/3.4.0" GEM_PATH="$D/ruby/lib/ruby/gems/3.4.0"
 cd "$P"
-OUT=$(cygpath -m "$P/build/faction_switch.pack")
+OUT=$(cygpath -m "$P/build/@@@@@@PAW_faction_switch.pack")
 python tools/uibuild_fs.py
 rm -rf build/stage; mkdir -p "build/stage/campaigns/main_rome" build/stage/lua_scripts "build/stage/ui/campaign ui"
 V=work/vanilla/campaigns/main_rome/scripting.lua
@@ -28,4 +28,4 @@ rm -f "$OUT"
 "$R" --game rome_2 pack create --pack-path "$OUT" >/dev/null 2>&1
 "$R" --game rome_2 pack add --pack-path "$OUT" -F "$(cygpath -m "$P/build/stage")" >/dev/null 2>&1
 "$R" --game rome_2 pack list -p "$OUT" 2>/dev/null | grep -v INFO
-ls -la build/faction_switch.pack; sha256sum build/faction_switch.pack | cut -c1-12
+ls -la build/@@@@@@PAW_faction_switch.pack; sha256sum build/@@@@@@PAW_faction_switch.pack | cut -c1-12

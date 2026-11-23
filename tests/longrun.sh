@@ -1,6 +1,6 @@
 #!/bin/sh
 # Long run (2026-11-23): switch among several factions, one end turn as each, N rounds. Game already running with
-# @rome2_bridge.pack + faction_switch.pack and <game>/faction_switch/faction_switch_helper.exe, on a human turn.
+# @rome2_bridge.pack + @@@@@@PAW_faction_switch.pack and <game>/faction_switch/faction_switch_helper.exe, on a human turn.
 # usage: sh tests/longrun.sh OUTDIR faction1 faction2 ...   (cycles through the list; ROUNDS env, default 10)
 OUT=$(cd "$(dirname "$1")" && pwd)/$(basename "$1"); shift; mkdir -p "$OUT"; LOG="$OUT/longrun.log"
 G="/f/Steam/steamapps/common/Total War Rome II"; FSD="$G/faction_switch"

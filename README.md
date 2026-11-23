@@ -4,7 +4,7 @@ Play several factions in one Grand Campaign. A "Switch faction" button opens a l
 one and press OK: the game saves, a small helper program makes a copy of that save with the chosen faction as the
 player, and the game loads it (about a minute). The faction you leave is played by the AI until you switch back.
 
-**Download:** see [Releases](../../releases): `faction_switch.pack` and the `faction_switch` folder (helper exe and
+**Download:** see [Releases](../../releases): `@@@@@@PAW_faction_switch.pack` and the `faction_switch` folder (helper exe and
 missions file). Install steps: [INSTALL.txt](INSTALL.txt).
 
 ## Status
