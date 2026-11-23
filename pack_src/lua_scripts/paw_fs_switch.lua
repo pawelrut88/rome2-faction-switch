@@ -81,10 +81,16 @@ local function alive(key)
   return f:region_list():num_items() > 0 or f:character_list():num_items() > 0
 end
 local function name_of(key) for _, kv in ipairs(FACTIONS) do if kv[1] == key then return kv[2] end end; return key end
-local function my_turn()   -- the End Turn button is inactive while other factions move
-  local b = find("button_end_turn"); local st = ""
-  pcall(function() st = tostring(b:CurrentState()) end)
-  return b ~= nil and not st:find("inactive")
+-- Whose turn: kept from the game's turn events. (Before: the End Turn button's state; in the strategic map mode that
+-- button isn't there, so a switch from map mode was refused: user's playtest 2026-11-23.) A save can only be made
+-- during the player's own turn, so after a load (the script starts afresh) it is the player's turn.
+FS.myturn = true
+local function my_turn() return FS.myturn end
+local function on_turn(starts)
+  return function(ctx)
+    local k; pcall(function() k = ctx:faction():name() end)
+    if k and k == local_faction() then FS.myturn = starts; log("turn " .. (starts and "starts" or "ends") .. ": " .. k) end
+  end
 end
 
 -- ---------------- the window
@@ -357,6 +363,8 @@ end))
 scripting.AddEventCallBack("ComponentLClickUp", guard("click", on_click))
 scripting.AddEventCallBack("ComponentMouseOn", guard("mouse", function() if FS.state ~= "idle" then on_ui_frame() end end))
 scripting.AddEventCallBack("TimeTrigger", guard("timer", on_timer))
+scripting.AddEventCallBack("FactionTurnStart", guard("turn start", on_turn(true)))
+scripting.AddEventCallBack("FactionTurnEnd", guard("turn end", on_turn(false)))
 -- timers armed at UICreated during a load only fire after turn start; FirstTickAfterWorldCreated is the place
 scripting.AddEventCallBack("FirstTickAfterWorldCreated", guard("first tick", function()
   pcall(place_button); camera_after_load()
