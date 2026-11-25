@@ -6,7 +6,7 @@ The game opens Menu > Load and writes click.txt with the OK button's UI position
 (SimulateClick on that OK does nothing), then on the confirm dialog's tick (tick.txt, or a fixed offset from the
 centre if Lua didn't see it). Log: state/ingame/helper.log.
 """
-import os, sys, time, shutil, subprocess, ctypes, traceback
+import os, sys, glob, time, shutil, subprocess, ctypes, traceback
 from ctypes import wintypes as wt
 
 FROZEN = getattr(sys, 'frozen', False)    # built with PyInstaller: faction_switch_helper.exe
@@ -112,6 +112,11 @@ def main():
     # 128 s (seen 17 s in the future). The helper starts within a second of the request, so its own clock is the mark.
     old, new, turn = req[0], req[1], int(req[2]); t_req = T_START - 3
     log('request %s -> %s turn %d' % (old, new, turn))
+    # src_*.save: the working copy of the autosave, only the input of one edit. Remove what earlier runs left (also
+    # runs that failed, where it stayed for the bug report); 7-8 MB each piled up (user, 2026-11-25).
+    for f in glob.glob(os.path.join(DIR, 'src_*.save')):
+        try: os.remove(f)
+        except OSError: pass
     # the autosave: newer than the request and no longer growing
     t0 = time.time(); last = None
     while True:
@@ -154,6 +159,8 @@ def main():
     if p.returncode:
         last = [l for l in text.splitlines() if l.strip()]
         raise RuntimeError('save edit failed: ' + (last[-1][:120] if last else 'see helper.log'))
+    try: os.remove(src)   # the edit is done (the stash in state/ has its own copy)
+    except OSError as e: log('src copy not removed: %s' % e)
     put('ready.txt', 'READY ' + name)
     c = wait_file('click.txt', 60, wiggle=True, poke='poke.txt')
     if not c or not c.startswith('OK'): raise RuntimeError('no OK position from the game: %r' % c)
